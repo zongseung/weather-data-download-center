@@ -4,6 +4,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
 
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential pkg-config curl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
