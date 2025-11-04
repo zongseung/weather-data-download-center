@@ -1,0 +1,4 @@
+{
+  "/data-explorer/page": "app/data-explorer/page.js",
+  "/nas-info/page": "app/nas-info/page.js"
+}
