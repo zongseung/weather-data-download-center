@@ -22,7 +22,7 @@ services:
     container_name: weather-data-platform-backend
     build:
       context: ..
-      dockerfile: ./docker/docker/backend.Dockerfile
+      dockerfile: docker/backend.Dockerfile
     ports:
       - "8081:8081"
     volumes:
@@ -48,7 +48,7 @@ services:
     container_name: weather-data-platform-frontend
     build:
       context: ..
-      dockerfile: ./docker/docker/frontend.Dockerfile
+      dockerfile: docker/frontend.Dockerfile
       args:
         - NEXT_PUBLIC_API_BASE_URL=/api  # 👈 브라우저에서 nginx로 보냄
     ports:

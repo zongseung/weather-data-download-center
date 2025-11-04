@@ -14,11 +14,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install "uv>=0.4.0"
 
 WORKDIR /app
-COPY backend/pyproject.toml ./
-COPY backend/uv.lock* ./
+COPY docker/backend/pyproject.toml ./
+COPY docker/backend/uv.lock* ./
 RUN uv sync --no-cache 2>/dev/null || (echo "uv sync failed, installing dependencies..." && uv pip install --system fastapi uvicorn python-jose passlib python-multipart redis pandas)
 
-COPY backend/ ./
+COPY docker/backend/ ./
 
 # NAS 데이터 마운트 포인트 (docker-compose.yml에서 볼륨 마운트)
 # WEATHER_DATA_PATH 환경변수가 설정되지 않으면 기본적으로 /nas-weather-data 사용

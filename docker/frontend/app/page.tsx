@@ -16,7 +16,15 @@ import {
   ChevronDown,
 } from "lucide-react"
 
-const BACKEND_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").replace(/\/$/, "")
+const rawBackendBaseUrl = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").trim()
+const normalizedBackendBaseUrl = rawBackendBaseUrl.replace(/\/$/, "")
+
+const BACKEND_API_BASE =
+  normalizedBackendBaseUrl === ""
+    ? "/api"
+    : normalizedBackendBaseUrl.endsWith("/api")
+      ? normalizedBackendBaseUrl
+      : `${normalizedBackendBaseUrl}/api`
 
 const DEFAULT_FORECAST_TYPES = ["단기예보", "초단기실황", "초단기예보"]
 
@@ -124,7 +132,7 @@ export default function WeatherDataPlatform() {
         setRegionData(data)
 
         // NAS에서 실제 예보 유형 가져오기
-        const nasData = await fetch(`${BACKEND_URL}/api/nas/forecast-types`).then((res) => res.json())
+        const nasData = await fetch(`${BACKEND_API_BASE}/nas/forecast-types`).then((res) => res.json())
         const nasForecastTypes = Array.isArray(nasData.forecast_types)
           ? nasData.forecast_types
               .map((ft: any) => (typeof ft === "string" ? ft : ft?.name))
@@ -165,7 +173,7 @@ export default function WeatherDataPlatform() {
       try {
         setNasSummaryLoading(true)
         setNasSummaryError("")
-        const response = await fetch(`${BACKEND_URL}/api/nas/data-summary`)
+        const response = await fetch(`${BACKEND_API_BASE}/nas/data-summary`)
         if (!response.ok) {
           throw new Error("Failed to fetch NAS summary")
         }
@@ -223,7 +231,7 @@ export default function WeatherDataPlatform() {
     try {
       setLoading(true)
       const response = await fetch(
-        `${BACKEND_URL}/api/nas/variables?forecast_type=${encodeURIComponent(forecastType)}&city=${encodeURIComponent(city)}&district=${encodeURIComponent(district)}&town=${encodeURIComponent(town)}`
+        `${BACKEND_API_BASE}/nas/variables?forecast_type=${encodeURIComponent(forecastType)}&city=${encodeURIComponent(city)}&district=${encodeURIComponent(district)}&town=${encodeURIComponent(town)}`
       )
       const data = await response.json()
       setVariables(data.variables)
@@ -240,7 +248,7 @@ export default function WeatherDataPlatform() {
     try {
       setLoading(true)
       const response = await fetch(
-        `${BACKEND_URL}/api/nas/variable-files?forecast_type=${encodeURIComponent(forecastType)}&city=${encodeURIComponent(city)}&district=${encodeURIComponent(district)}&town=${encodeURIComponent(town)}&variable=${encodeURIComponent(variable)}`
+        `${BACKEND_API_BASE}/nas/variable-files?forecast_type=${encodeURIComponent(forecastType)}&city=${encodeURIComponent(city)}&district=${encodeURIComponent(district)}&town=${encodeURIComponent(town)}&variable=${encodeURIComponent(variable)}`
       )
       const data = await response.json()
       setFiles(data.files)
@@ -306,7 +314,7 @@ export default function WeatherDataPlatform() {
     setPreviewError("")
 
     try {
-      const url = `${BACKEND_URL}/api/nas/file-preview?forecast_type=${encodeURIComponent(selectedForecast)}&city=${encodeURIComponent(selectedLevel1)}&district=${encodeURIComponent(selectedLevel2)}&town=${encodeURIComponent(selectedLevel3)}&variable=${encodeURIComponent(selectedVariable)}&filename=${encodeURIComponent(file.filename)}&lines=40`
+      const url = `${BACKEND_API_BASE}/nas/file-preview?forecast_type=${encodeURIComponent(selectedForecast)}&city=${encodeURIComponent(selectedLevel1)}&district=${encodeURIComponent(selectedLevel2)}&town=${encodeURIComponent(selectedLevel3)}&variable=${encodeURIComponent(selectedVariable)}&filename=${encodeURIComponent(file.filename)}&lines=40`
       const response = await fetch(url)
 
       if (!response.ok) {
@@ -332,7 +340,7 @@ export default function WeatherDataPlatform() {
   }
 
   const handleDownload = (file: FileInfo) => {
-    const url = `${BACKEND_URL}/api/nas/download?forecast_type=${encodeURIComponent(selectedForecast)}&city=${encodeURIComponent(selectedLevel1)}&district=${encodeURIComponent(selectedLevel2)}&town=${encodeURIComponent(selectedLevel3)}&variable=${encodeURIComponent(selectedVariable)}&filename=${encodeURIComponent(file.filename)}`
+    const url = `${BACKEND_API_BASE}/nas/download?forecast_type=${encodeURIComponent(selectedForecast)}&city=${encodeURIComponent(selectedLevel1)}&district=${encodeURIComponent(selectedLevel2)}&town=${encodeURIComponent(selectedLevel3)}&variable=${encodeURIComponent(selectedVariable)}&filename=${encodeURIComponent(file.filename)}`
 
     const link = document.createElement("a")
     link.href = url
